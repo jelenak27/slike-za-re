@@ -3,7 +3,7 @@
 #include <pigpiod_if2.h>
 
 #define PIN_DHT22         4
-#define PIN_PIR          17
+#define PIN_PIR          20
 #define PIN_LED_TEMP     27
 #define PIN_LED_KRETANJE 22
 #define I2C_BUS           1
@@ -31,6 +31,13 @@ Dialog::Dialog(QWidget *parent)
     gpio_write(pi, PIN_LED_TEMP,     0);
     gpio_write(pi, PIN_LED_KRETANJE, 0);
 
+    // DHT thread
+    dhtThread = new DhtThread();
+    dhtThread->pi_handle = pi;
+    dhtThread->gpio = PIN_DHT22;
+    connect(dhtThread, &DhtThread::rezultat,
+            this, &Dialog::primiDht);
+
     // timer svakih 2 sekunde
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout,
@@ -49,22 +56,25 @@ Dialog::Dialog(QWidget *parent)
 
 Dialog::~Dialog()
 {
+    dhtThread->quit();
+    dhtThread->wait();
     gpio_write(pi, PIN_LED_TEMP,     0);
     gpio_write(pi, PIN_LED_KRETANJE, 0);
     pigpio_stop(pi);
     delete ui;
 }
 
+void Dialog::primiDht(float t, float h)
+{
+    lastTemp = t;
+    lastVlaz = h;
+}
+
 void Dialog::citajSenzore()
 {
-    // DHT22 - jedno citanje, dve vrednosti
-    float t = 0.0f, h = 0.0f;
-    int rc = dht22_read(pi, PIN_DHT22, &t, &h);
-    if (rc == 0) {
-        lastTemp = t;
-        lastVlaz = h;
-    }
-    // ako citanje nije uspelo, koristi poslednje vrednosti
+    // pokreni DHT citanje u posebnom threadu ako vec ne radi
+    if (!dhtThread->isRunning())
+        dhtThread->start();
 
     // LDR i PIR
     int svetlo   = citajLDR();
