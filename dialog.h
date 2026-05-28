@@ -5,6 +5,9 @@
 #include <QTimer>
 #include <pigpiod_if2.h>
 
+#include "dht22.h"
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class Dialog; }
 QT_END_NAMESPACE
@@ -23,14 +26,14 @@ private slots:
 
 private:
     Ui::Dialog *ui;
-    QTimer *timer;
-    int pi;          // pigpio handle
-    float prag;      // temperatura prag
+    QTimer     *timer;
+    int         pi;
+    float       prag;
+    float       lastTemp;
+    float       lastVlaz;
 
-    float citajDHT22Temp();
-    float citajDHT22Vlaznost();
-    int citajLDR();
     int citajPIR();
+    int citajLDR();
 };
 
 #endif
