@@ -2,10 +2,12 @@
 #include "ui_dialog.h"
 #include <pigpiod_if2.h>
 
-#define PIN_DHT22  4
-#define PIN_PIR   17
-#define I2C_BUS    1
-#define PCF8591   0x48
+#define PIN_DHT22        4
+#define PIN_PIR         17
+#define PIN_LED_TEMP    27
+#define PIN_LED_KRETANJE 22
+#define I2C_BUS          1
+#define PCF8591       0x48
 
 Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
@@ -14,13 +16,14 @@ Dialog::Dialog(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // povezi se na pigpio daemon
     pi = pigpio_start(nullptr, nullptr);
 
-    // postavi PIR kao ulaz
     set_mode(pi, PIN_PIR, PI_INPUT);
+    set_mode(pi, PIN_LED_TEMP, PI_OUTPUT);
+    set_mode(pi, PIN_LED_KRETANJE, PI_OUTPUT);
+    gpio_write(pi, PIN_LED_TEMP, 0);
+    gpio_write(pi, PIN_LED_KRETANJE, 0);
 
-    // timer za ocitavanje svakih 2 sekunde
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Dialog::citajSenzore);
     timer->start(2000);
@@ -28,27 +31,24 @@ Dialog::Dialog(QWidget *parent)
     connect(ui->pushButtonPostavi, &QPushButton::clicked,
             this, &Dialog::postaviPrag);
 
-    // ucitaj pocetne slike
     ui->labelKretanje->setPixmap(
-        QPixmap(":/kretanje_ne.png").scaled(
-            ui->labelKretanje->size(),
-            Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    ui->labelLedTemp->setPixmap(
-        QPixmap(":/led_temp_off.png").scaled(
-            ui->labelLedTemp->size(),
-            Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    ui->labelLedKretanje->setPixmap(
-        QPixmap(":/led_kretanje_off.png").scaled(
-            ui->labelLedKretanje->size(),
+        QPixmap(":/kretanje_ne.png").scaled(160, 35,
             Qt::KeepAspectRatio, Qt::SmoothTransformation));
     ui->labelStatus->setPixmap(
-        QPixmap(":/status_ispod.png").scaled(
-            ui->labelStatus->size(),
+        QPixmap(":/status_ispod.png").scaled(160, 35,
+            Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->labelLedTemp->setPixmap(
+        QPixmap(":/led_temp_off.png").scaled(120, 35,
+            Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->labelLedKretanje->setPixmap(
+        QPixmap(":/led_kretanje_off.png").scaled(120, 35,
             Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 Dialog::~Dialog()
 {
+    gpio_write(pi, PIN_LED_TEMP, 0);
+    gpio_write(pi, PIN_LED_KRETANJE, 0);
     pigpio_stop(pi);
     delete ui;
 }
@@ -60,64 +60,53 @@ void Dialog::citajSenzore()
     int svetlo = citajLDR();
     int kretanje = citajPIR();
 
-    // prikaz temperature i vlaznosti
     ui->lcdTemp->display(temp);
     ui->lcdVlaznost->display(vlaz);
-
-    // progress bar osvetljenje (0-255)
     ui->progressBarOsvetljenje->setValue(svetlo);
+    ui->grafWidget->dodajTacku(svetlo);
 
-    // ispis merenja
-    QString linija = QString("T:%1°C  H:%2%  L:%3  PIR:%4")
+    QString linija = QString("T:%1°C  H:%2%  L:%3%  PIR:%4")
         .arg(temp, 0, 'f', 1)
         .arg(vlaz, 0, 'f', 1)
         .arg(svetlo)
         .arg(kretanje);
-    ui->textBrowserIspis->append(linija);
+    ui->textEditIspis->append(linija);
 
-    // kretanje slike
     if (kretanje) {
+        gpio_write(pi, PIN_LED_KRETANJE, 1);
         ui->labelKretanje->setPixmap(
-            QPixmap(":/kretanje_da.png").scaled(
-                ui->labelKretanje->size(),
+            QPixmap(":/kretanje_da.png").scaled(160, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
         ui->labelLedKretanje->setPixmap(
-            QPixmap(":/led_kretanje_on.png").scaled(
-                ui->labelLedKretanje->size(),
+            QPixmap(":/led_kretanje_on.png").scaled(120, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
+        gpio_write(pi, PIN_LED_KRETANJE, 0);
         ui->labelKretanje->setPixmap(
-            QPixmap(":/kretanje_ne.png").scaled(
-                ui->labelKretanje->size(),
+            QPixmap(":/kretanje_ne.png").scaled(160, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
         ui->labelLedKretanje->setPixmap(
-            QPixmap(":/led_kretanje_off.png").scaled(
-                ui->labelLedKretanje->size(),
+            QPixmap(":/led_kretanje_off.png").scaled(120, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
-    // temperatura prag slike
     if (temp > prag) {
+        gpio_write(pi, PIN_LED_TEMP, 1);
         ui->labelStatus->setPixmap(
-            QPixmap(":/status_iznad.png").scaled(
-                ui->labelStatus->size(),
+            QPixmap(":/status_iznad.png").scaled(160, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
         ui->labelLedTemp->setPixmap(
-            QPixmap(":/led_temp_on.png").scaled(
-                ui->labelLedTemp->size(),
+            QPixmap(":/led_temp_on.png").scaled(120, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
+        gpio_write(pi, PIN_LED_TEMP, 0);
         ui->labelStatus->setPixmap(
-            QPixmap(":/status_ispod.png").scaled(
-                ui->labelStatus->size(),
+            QPixmap(":/status_ispod.png").scaled(160, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
         ui->labelLedTemp->setPixmap(
-            QPixmap(":/led_temp_off.png").scaled(
-                ui->labelLedTemp->size(),
+            QPixmap(":/led_temp_off.png").scaled(120, 35,
                 Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
-    ui->grafWidget->dodajTacku(temp);
-
 }
 
 void Dialog::postaviPrag()
@@ -134,17 +123,15 @@ int Dialog::citajLDR()
 {
     int handle = i2c_open(pi, I2C_BUS, PCF8591, 0);
     if (handle < 0) return 0;
-    i2c_write_byte(pi, handle, 0x40); // AIN0
-    i2c_read_byte(pi, handle);        // dummy read
+    i2c_write_byte(pi, handle, 0x01);
+    i2c_read_byte(pi, handle);
     int val = i2c_read_byte(pi, handle);
     i2c_close(pi, handle);
-    return val;
+    return (val * 100) / 255;
 }
 
 float Dialog::citajDHT22Temp()
 {
-    // placeholder - DHT22 zahteva posebnu biblioteku
-    // privremeno vraca test vrednost
     return 22.5;
 }
 

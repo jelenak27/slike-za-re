@@ -6,9 +6,10 @@ GrafWidget::GrafWidget(QWidget *parent)
 {
 }
 
-void GrafWidget::dodajTacku(float temp)
+void GrafWidget::dodajTacku(int svetlo)
 {
-    podaci.append(temp);
+    podaci.append(svetlo);
+    // cuva max 50 tacaka
     if (podaci.size() > 50)
         podaci.removeFirst();
     update(); // poziva paintEvent
@@ -22,32 +23,30 @@ void GrafWidget::paintEvent(QPaintEvent *event)
 
     if (podaci.size() < 2) return;
 
-    // odredi min/max za skaliranje
-    float minT = *std::min_element(podaci.begin(), podaci.end()) - 2;
-    float maxT = *std::max_element(podaci.begin(), podaci.end()) + 2;
-
     int w = width();
     int h = height();
     int n = podaci.size();
 
-    // crtaj osu
-    painter.setPen(QPen(Qt::gray, 1));
-    painter.drawLine(30, 5, 30, h-20);
-    painter.drawLine(30, h-20, w-5, h-20);
+    // osi
+    painter.setPen(QPen(Qt::black, 1));
+    painter.drawLine(30, 5, 30, h - 20);       // Y osa
+    painter.drawLine(30, h - 20, w - 5, h - 20); // X osa
 
-    // crtaj liniju temperature
-    painter.setPen(QPen(Qt::red, 2));
+    // oznake Y ose (0, 50, 100)
+    painter.setFont(QFont("Arial", 8));
+    painter.drawText(2, h - 20, "0");
+    painter.drawText(2, h/2, "50");
+    painter.drawText(2, 12, "100");
+
+    // linija grafa
+    painter.setPen(QPen(QColor(255, 140, 0), 2)); // narandzasta
+    float korakX = (float)(w - 35) / (n - 1);
+
     for (int i = 1; i < n; i++) {
-        float x1 = 30 + (float)(i-1)/(n-1) * (w-35);
-        float y1 = h-20 - (podaci[i-1]-minT)/(maxT-minT) * (h-30);
-        float x2 = 30 + (float)i/(n-1) * (w-35);
-        float y2 = h-20 - (podaci[i]-minT)/(maxT-minT) * (h-30);
+        int x1 = 30 + (i - 1) * korakX;
+        int y1 = (h - 20) - (podaci[i-1] * (h - 30) / 100);
+        int x2 = 30 + i * korakX;
+        int y2 = (h - 20) - (podaci[i] * (h - 30) / 100);
         painter.drawLine(x1, y1, x2, y2);
     }
-
-    // labele
-    painter.setPen(Qt::black);
-    painter.setFont(QFont("Arial", 8));
-    painter.drawText(2, 15, QString::number(maxT,'f',1));
-    painter.drawText(2, h-15, QString::number(minT,'f',1));
 }
