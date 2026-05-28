@@ -40,23 +40,11 @@ Dialog::Dialog(QWidget *parent)
     connect(ui->pushButtonPostavi, &QPushButton::clicked,
             this, &Dialog::postaviPrag);
 
-    // pocetne slike
-    ui->labelKretanje->setPixmap(
-        QPixmap(":/kretanje_ne.png").scaled(
-            160, 35, Qt::KeepAspectRatio,
-            Qt::SmoothTransformation));
-    ui->labelStatus->setPixmap(
-        QPixmap(":/status_ispod.png").scaled(
-            160, 35, Qt::KeepAspectRatio,
-            Qt::SmoothTransformation));
-    ui->labelLedTemp->setPixmap(
-        QPixmap(":/led_temp_off.png").scaled(
-            120, 35, Qt::KeepAspectRatio,
-            Qt::SmoothTransformation));
-    ui->labelLedKretanje->setPixmap(
-        QPixmap(":/led_kretanje_off.png").scaled(
-            120, 35, Qt::KeepAspectRatio,
-            Qt::SmoothTransformation));
+    // pocetne vrednosti labela
+    ui->labelKretanje->setText("Nema kretanja");
+    ui->labelStatus->setText("U granicama");
+    ui->labelLedTemp->setText("Temp OK");
+    ui->labelLedKretanje->setText("Mirovanje");
 }
 
 Dialog::~Dialog()
@@ -99,47 +87,23 @@ void Dialog::citajSenzore()
     // kretanje
     if (kretanje) {
         gpio_write(pi, PIN_LED_KRETANJE, 1);
-        ui->labelKretanje->setPixmap(
-            QPixmap(":/kretanje_da.png").scaled(
-                160, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
-        ui->labelLedKretanje->setPixmap(
-            QPixmap(":/led_kretanje_on.png").scaled(
-                120, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
+        ui->labelKretanje->setText("Detektovano");
+        ui->labelLedKretanje->setText("Kretanje!");
     } else {
         gpio_write(pi, PIN_LED_KRETANJE, 0);
-        ui->labelKretanje->setPixmap(
-            QPixmap(":/kretanje_ne.png").scaled(
-                160, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
-        ui->labelLedKretanje->setPixmap(
-            QPixmap(":/led_kretanje_off.png").scaled(
-                120, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
+        ui->labelKretanje->setText("Nema kretanja");
+        ui->labelLedKretanje->setText("Mirovanje");
     }
 
     // temperatura vs prag
     if (lastTemp > prag) {
         gpio_write(pi, PIN_LED_TEMP, 1);
-        ui->labelStatus->setPixmap(
-            QPixmap(":/status_iznad.png").scaled(
-                160, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
-        ui->labelLedTemp->setPixmap(
-            QPixmap(":/led_temp_on.png").scaled(
-                120, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
+        ui->labelStatus->setText("Iznad praga");
+        ui->labelLedTemp->setText("Alarm temp");
     } else {
         gpio_write(pi, PIN_LED_TEMP, 0);
-        ui->labelStatus->setPixmap(
-            QPixmap(":/status_ispod.png").scaled(
-                160, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
-        ui->labelLedTemp->setPixmap(
-            QPixmap(":/led_temp_off.png").scaled(
-                120, 35, Qt::KeepAspectRatio,
-                Qt::SmoothTransformation));
+        ui->labelStatus->setText("U granicama");
+        ui->labelLedTemp->setText("Temp OK");
     }
 }
 
