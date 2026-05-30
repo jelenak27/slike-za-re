@@ -18,10 +18,10 @@ HEADERS += \
 FORMS += \
     dialog.ui
 
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+qnx: target.path = /home/pi/$${TARGET}/bin
+else: unix:!android: target.path = /home/pi/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RESOURCES += \
-    slike.qrc
+RESOURCES +=
 
 LIBS += -lpigpiod_if2 -lrt

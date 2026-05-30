@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+    background-color: #f0f0f0;
+}
+
+QGroupBox {
+    border: 2px solid #b0b8c8;
+    border-radius: 6px;
+    margin-top: 10px;
+    padding-top: 6px;
+    font-weight: bold;
+    color: #2c5f9e;
+    font-size: 11px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 8px;
+    padding: 0 4px;
+    background-color: #f0f0f0;
+}
+
+QLabel {
+    font-size: 12px;
+    color: #222222;
+}
+
+QLCDNumber {
+    background-color: #ddeedd;
+    color: #1a5c1a;
+    border: 1px solid #999;
+    border-radius: 3px;
+}
+
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #f0f0f0, stop:1 #d8d8d8);
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: #222;
+}
+
+QPushButton:hover {
+    background: #d0e0f0;
+    border-color: #5a80b0;
+}
+
+QPushButton:pressed {
+    background: #b8cce0;
+}
+
+QProgressBar {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    text-align: right;
+    padding-right: 4px;
+    background: #e8e8e8;
+    font-size: 11px;
+    color: #333;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #e08800, stop:1 #f5c000);
+    border-radius: 2px;
+}
+
+QSpinBox {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 2px 4px;
+    background: white;
+    font-size: 12px;
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Okolina</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Kretanje:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="labelDanNoc">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="labelLedTemp">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>:/slike/led_temp_off.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>LED  Kretanje</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="labelLedKretanje">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>:/slike/led_kretanje_off.png</pixmap>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Dan/Noc:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>LED Temp</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="labelKretanje">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>:/slike/kretanje_ne.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>300</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Temperatura-graf</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="GrafWidget" name="grafWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>300</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QDialog {
+    background-color: #f0f0f0;
+}
+
+QGroupBox {
+    border: 2px solid #b0b8c8;
+    border-radius: 6px;
+    margin-top: 10px;
+    padding-top: 6px;
+    font-weight: bold;
+    color: #2c5f9e;
+    font-size: 11px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 8px;
+    padding: 0 4px;
+    background-color: #f0f0f0;
+}
+
+QLabel {
+    font-size: 12px;
+    color: #222222;
+}
+
+QLCDNumber {
+    background-color: #ddeedd;
+    color: #1a5c1a;
+    border: 1px solid #999;
+    border-radius: 3px;
+}
+
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #f0f0f0, stop:1 #d8d8d8);
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: #222;
+}
+
+QPushButton:hover {
+    background: #d0e0f0;
+    border-color: #5a80b0;
+}
+
+QPushButton:pressed {
+    background: #b8cce0;
+}
+
+QProgressBar {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    text-align: right;
+    padding-right: 4px;
+    background: #e8e8e8;
+    font-size: 11px;
+    color: #333;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #e08800, stop:1 #f5c000);
+    border-radius: 2px;
+}
+
+QSpinBox {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 2px 4px;
+    background: white;
+    font-size: 12px;
+}</string>
+     </property>
+     <property name="title">
+      <string>Ispis merenja</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QTextBrowser" name="textBrowserIspis"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Senzori</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Temp:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QLCDNumber" name="lcdTemp"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Vlaznost:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QLCDNumber" name="lcdVlaznost"/>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Prag Temperature:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QSpinBox" name="spinBoxPrag"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="QPushButton" name="pushButtonPostavi">
+        <property name="text">
+         <string>Postavi</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Status:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="labelStatus">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>:/slike/status_ispod.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GrafWidget</class>
+   <extends>QWidget</extends>
+   <header>grafwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

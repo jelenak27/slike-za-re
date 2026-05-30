@@ -10,13 +10,13 @@ class GrafWidget : public QWidget
 
 public:
     explicit GrafWidget(QWidget *parent = nullptr);
-    void dodajTacku(int svetlo);
+    void dodajTacku(float temp);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    QVector<int> podaci;
+    QVector<float> podaci;
 };
 
 #endif

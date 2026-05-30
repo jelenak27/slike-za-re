@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/slike">
+        <file>temperature.png</file>
+        <file>kretanje_da.png</file>
+        <file>kretanje_ne.png</file>
+        <file>led_kretanje_off.png</file>
+        <file>led_kretanje_on.png</file>
+        <file>led_temp_off.png</file>
+        <file>led_temp_on.png</file>
+        <file>status_ispod.png</file>
+        <file>status_iznad.png</file>
+    </qresource>
+</RCC>
